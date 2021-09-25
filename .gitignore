@@ -9,4 +9,3 @@ Thumbs.db
 *.log
 config.h
 .vscode/c_cpp_properties.json
-.vscode/arduino.json
