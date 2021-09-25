@@ -34,10 +34,12 @@ void loop() {
     return;
   }
   configTzTime("JST-9", "ntp.nict.jp", "ntp.jst.mfeed.ad.jp");
-  push(getCurrentTime(), readSensor());
+  delay(10000);
+  push(getCurrentTimeLabel(), readSensor());
   postImage(generateChartImageUrl());
+  int sleepTime = 86400 - getStartOfSecond();
   stopWiFi();
-  for (int i = 0; i < 24 * 3600; i++) {
+  for (int i = 0; i < sleepTime; i++) {
     delay(1000);
   }
 }
@@ -97,7 +99,7 @@ float readSensor() {
   return value > 1000 ? 1000 : value;
 }
 
-String getCurrentTime() {
+String getCurrentTimeLabel() {
   time_t t;
   struct tm *tm;
   static const char *wd[7] = {"Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"};
@@ -110,6 +112,14 @@ String getCurrentTime() {
   return String(buf);
 }
 
+int getStartOfSecond() {
+  time_t t;
+  struct tm *tm;
+  t = time(NULL);
+  tm = localtime(&t);
+  return tm->tm_hour * 3600 + tm->tm_min * 60 + tm->tm_sec;
+}
+
 String generateChartImageUrl() {
   JSONVar body;
   body["type"] = "line";
@@ -119,6 +129,7 @@ String generateChartImageUrl() {
   body["data"]["datasets"][0]["label"] = CHART_NAME;
   body["data"]["datasets"][0]["backgroundColor"] = CHART_COLOR;
   body["data"]["datasets"][0]["borderColor"] = CHART_COLOR;
+  body["data"]["datasets"][0]["fill"] = false;
   body["options"]["scales"]["yAxes"][0]["ticks"]["min"] = 0;
   body["options"]["scales"]["yAxes"][0]["ticks"]["max"] = 1000;
   body["options"]["scales"]["yAxes"][0]["ticks"]["stepSize"] = 100;
