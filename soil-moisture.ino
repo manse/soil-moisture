@@ -24,7 +24,7 @@ String lastRunnedAtDate = "";
 void setup() {
   Serial.begin(115200);
   for (int i = 0; i < LOG_LENGTH; i++) {
-    sensorLogs[i] = {"", 0.0};
+    sensorLogs[i] = {"", 1000.0};
   }
 }
 
